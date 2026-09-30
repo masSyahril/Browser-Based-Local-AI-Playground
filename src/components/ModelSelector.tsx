@@ -33,6 +33,7 @@ export function ModelSelector({
   const [highlight, setHighlight] = useState(0);
   const rootRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
   const listId = useId();
 
   const selected = getModelOption(value);
@@ -53,9 +54,15 @@ export function ModelSelector({
     setOpen(true);
   };
 
+  // Return focus to the trigger so keyboard users aren't dropped onto <body>.
+  const close = () => {
+    setOpen(false);
+    triggerRef.current?.focus();
+  };
+
   const pick = (key: string) => {
     onChange(key);
-    setOpen(false);
+    close();
   };
 
   const onListKey = (e: KeyboardEvent) => {
@@ -68,7 +75,11 @@ export function ModelSelector({
     } else if (e.key === "Enter" || e.key === " ") {
       e.preventDefault();
       pick(MODEL_OPTIONS[highlight].key);
-    } else if (e.key === "Escape" || e.key === "Tab") {
+    } else if (e.key === "Escape") {
+      e.preventDefault();
+      e.stopPropagation();
+      close();
+    } else if (e.key === "Tab") {
       setOpen(false);
     }
   };
@@ -78,6 +89,7 @@ export function ModelSelector({
   return (
     <div ref={rootRef} className="relative">
       <button
+        ref={triggerRef}
         type="button"
         disabled={disabled}
         aria-haspopup="listbox"
@@ -104,7 +116,7 @@ export function ModelSelector({
           ref={listRef}
           id={listId}
           role="listbox"
-          tabIndex={-1}
+          tabIndex={0}
           aria-label="Model"
           aria-activedescendant={`${listId}-${highlight}`}
           onKeyDown={onListKey}

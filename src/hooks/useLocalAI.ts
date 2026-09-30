@@ -329,6 +329,11 @@ export function useLocalAI(settings: Settings, supportsF16: boolean) {
       };
       setConversations((prev) => [updated, ...prev.filter((c) => c.id !== updated.id)]);
       setActiveId(updated.id);
+      // Persist the prompt now; the streaming reply is saved on complete/error.
+      void storage.saveConversation({
+        ...updated,
+        messages: [...conversation.messages, userMsg],
+      });
 
       const requestId = crypto.randomUUID();
       activeRequestRef.current = {

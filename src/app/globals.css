@@ -11,7 +11,7 @@
   --border: #e2e2dc;
   --fg: #18181b;
   --muted: #6b6b66;
-  --accent: #4d7c0f;
+  --accent: #3f6212;
   --accent-fg: #ffffff;
   --accent-soft: #ecf5d8;
   --danger: #b42318;
@@ -97,6 +97,16 @@ input[type="range"] {
   vertical-align: text-bottom;
   background: var(--accent);
   animation: caret-blink 1s steps(1) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 /* Markdown body typography — kept here rather than pulling in @tailwindcss/typography. */

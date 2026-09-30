@@ -14,13 +14,20 @@ const SUGGESTIONS = [
 ];
 
 interface ChatWindowProps {
+  conversationId: string | null;
   messages: ChatMessageType[];
   generating: boolean;
   modelReady: boolean;
   onSuggestion: (text: string) => void;
 }
 
-export function ChatWindow({ messages, generating, modelReady, onSuggestion }: ChatWindowProps) {
+export function ChatWindow({
+  conversationId,
+  messages,
+  generating,
+  modelReady,
+  onSuggestion,
+}: ChatWindowProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const stickToBottom = useRef(true);
 
@@ -44,7 +51,7 @@ export function ChatWindow({ messages, generating, modelReady, onSuggestion }: C
         {messages.length === 0 ? (
           <EmptyState modelReady={modelReady} onSuggestion={onSuggestion} />
         ) : (
-          <ErrorBoundary label="the message list">
+          <ErrorBoundary key={conversationId ?? "new"} label="the message list">
             <div className="space-y-7">
               {messages.map((m) => (
                 <ChatMessage key={m.id} message={m} streaming={generating && m.id === lastId} />
@@ -66,9 +73,9 @@ function EmptyState({
 }) {
   return (
     <div className="pt-[8vh]">
-      <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
+      <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
         A language model, running on your GPU.
-      </h1>
+      </h2>
       <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted">
         Weights are downloaded once, cached by your browser, and executed with WebGPU inside a
         Web Worker. Your prompts never leave this tab.
